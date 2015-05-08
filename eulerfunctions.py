@@ -5,15 +5,15 @@ import collections
 import functools
 
 
-#Loads first 10 million primes from file
+# Loads first 10 million primes from file
 global prime_list
 prime_list = []
 f = open('10Mprimes.txt', 'r')
 for line in f:
     prime_list.append(int(line))
 f.close()
-cache_high=prime_list[-1]
-prime_list=set(prime_list)
+cache_high = prime_list[-1]
+prime_list = set(prime_list)
 
 
 class memoized(object):
@@ -21,9 +21,11 @@ class memoized(object):
     If called later with the same arguments, the cached value is returned
     (not reevaluated).
     '''
+
     def __init__(self, func):
         self.func = func
         self.cache = {}
+
     def __call__(self, *args):
         if not isinstance(args, collections.Hashable):
             # uncacheable. a list, for instance.
@@ -35,17 +37,37 @@ class memoized(object):
             value = self.func(*args)
             self.cache[args] = value
             return value
+
     def __repr__(self):
         '''Return the function's docstring.'''
         return self.func.__doc__
+
     def __get__(self, obj, objtype):
         '''Support instance methods.'''
         return functools.partial(self.__call__, obj)
 
+def factorial(n):
+    t = 1
+    for i in range(1, n + 1):
+        t *= i
+    return t
 
-#Checks if a number is Prime
+def factor(n):
+    factors = []
+    if n == 1:
+        return [1]
+    if n == 2:
+        return [1, 2]
+    for i in range(1, n // 2 + 1):
+        if n % i == 0:
+            factors.append(i)
+    factors.append(n)
+    return factors
+
+
+# Checks if a number is Prime
 @memoized
-def isPrime(n):
+def isprime(n):
     if n == 1:
         return False
     elif n <= cache_high:
@@ -71,6 +93,7 @@ def isPrime(n):
                 return False
             f += 6
     return True
+
 
 #Returns a Prime Number Generator
 def primegen():
@@ -121,12 +144,11 @@ def primefac(n):
             faclist.append(x)
             n /= x
         else:
-            if isPrime(n):
+            if isprime(n):
                 faclist.append(int(n))
                 return faclist
             x = next(p)
     return faclist
-
 
 
 #Returns a Composite Number Generator
@@ -146,9 +168,11 @@ def compgen(x=4):
                 if n % (f + 2) == 0:
                     yield n
 
+
 #checks if a number is square
 def issquare(n):
     return n == int(math.sqrt(n))
+
 
 #checks if a number is triangular
 def istriangle(n):
@@ -160,10 +184,12 @@ def ispenta(n):
     n = (math.sqrt(n * 24 + 1) + 1) / 6
     return n == int(n)
 
-#checks if a number is hexagonal    
+
+#checks if a number is hexagonal
 def ishexa(n):
     n = (math.sqrt(n * 8 + 1) + 1) / 4
     return n == int(n)
+
 
 #Returns a triangular number generator
 def trigen():
@@ -173,6 +199,7 @@ def trigen():
         n += i
         yield n
         i += 1
+
 
 #Returns a square number generator
 def squaregen():
@@ -189,12 +216,14 @@ def pentagen():
         yield int(i / 2 * (3 * i - 1))
         i += 1
 
+
 #returns a hexagonal number generator
 def hexagen():
     i = 1
     while True:
         yield i * (2 * i - 1)
         i += 1
+
 
 #returns a heptagonal number generator
 def heptagen():
@@ -203,6 +232,7 @@ def heptagen():
         yield int(i * (5 * i - 3) / 2)
         i += 1
 
+
 #returns an octagonal number generator
 def octagen():
     i = 1
@@ -210,31 +240,28 @@ def octagen():
         yield i * (3 * i - 2)
         i += 1
 
-#checks if a string is a palindrome       
+
+#checks if a string is a palindrome
 def check_palindrome(input, case=True, strip=True):
     bar = ascii(input)
-    if (strip):
+    if strip:
         bar = bar.replace(' ', '')
-    if (case):
+    if case:
         bar = bar.upper()
     length = len(bar)
-    if (length % 2 == 0):
-        if ((bar[:(length // 2)]) == (bar[length:(length // 2 - 1):-1])):
+    if length % 2 == 0:
+        if (bar[:(length // 2)]) == (bar[length:(length // 2 - 1):-1]):
             return True
     else:
-        if ((bar[:(length // 2)]) == (bar[length:(length // 2):-1])):
+        if (bar[:(length // 2)]) == (bar[length:(length // 2):-1]):
             return True
     return False
 
 
-
-
-
 def prime_bench(limit=1000):
-    start=time.time()
-    #p=gen_primes()
-    p=primegen()
+    start = time.time()
+    p = primegen()
     for i in range(limit):
         p.next()
-    end=time.time()
-    print "Total time:",end-start
+    end = time.time()
+    print("Total time:", end - start)

@@ -1,8 +1,8 @@
-sum=0
-f=open('13input.txt','r')
+data = 0
+f = open('13input.txt', 'r')
 for line in f:
-  sum+=int(line)
+    data += int(line)
 f.close()
-s=str(sum)
-print (s[0:10])
+s = str(data)
+print(s[0:10])
 
